@@ -25,17 +25,9 @@ jobs:
         target: esp32
         command: "idf.py set-target esp32 && idf.py build"
     
-    - name: ls build folder1
-      run: |
-        ls -l build
-
-    - name: ls build folder
-      run: |
-        ls -l /app/ste2425/PSP-Bluetooth-Dongle/build
-
     - name: Zip build folder
       run: |
-        zip -r build.zip /app/ste2425/PSP-Bluetooth-Dongle/build
+        zip -r build.zip build
 
     - name: Release
       uses: softprops/action-gh-release@v2
