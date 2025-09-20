@@ -24,6 +24,14 @@ jobs:
         esp_idf_version: release-v5.4
         target: esp32
         command: "idf.py set-target esp32 && idf.py build"
+    
+    - name: ls build folder1
+      run: |
+        ls -l buils
+
+    - name: ls build folder
+      run: |
+        ls -l /app/ste2425/PSP-Bluetooth-Dongle/build
 
     - name: Zip build folder
       run: |
