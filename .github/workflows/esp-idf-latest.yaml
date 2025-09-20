@@ -3,7 +3,7 @@ name: Build with ESP-IDF v5.4
 on:
   push:
     branches: [ main, develop ]
-    tags: [ '*' ] # Trigger on tags for releases
+    tags: '**' # Trigger on tags for releases
   pull_request:
     branches: [ main, develop ]
 
