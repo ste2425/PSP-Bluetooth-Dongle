@@ -27,7 +27,7 @@ jobs:
     
     - name: ls build folder1
       run: |
-        ls -l buils
+        ls -l build
 
     - name: ls build folder
       run: |
