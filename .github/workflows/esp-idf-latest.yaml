@@ -3,6 +3,7 @@ name: Build with ESP-IDF v5.4
 on:
   push:
     branches: [ main, develop ]
+    #tags: [ '*' ] # Trigger on tags for releases
   pull_request:
     branches: [ main, develop ]
 
@@ -24,31 +25,14 @@ jobs:
         target: esp32
         command: "idf.py set-target esp32 && idf.py build"
 
-    #- name: Arduino build ESP32-S3
-    #  uses: espressif/esp-idf-ci-action@main
-    #  with:
-    #    esp_idf_version: release-v5.4
-    #    target: esp32s3
-    #    command: "idf.py set-target esp32s3 && idf.py build"
+    - name: Zip build folder
+      run: |
+        zip -r build.zip /app/ste2425/PSP-Bluetooth-Dongle/build
 
-    #- name: Arduino build ESP32-C3
-    #  uses: espressif/esp-idf-ci-action@main
-    #  with:
-    #    esp_idf_version: release-v5.4
-    #    target: esp32c3
-    #    command: "idf.py set-target esp32c3 && idf.py build"
-
-    #- name: Arduino build ESP32-C6
-    #  uses: espressif/esp-idf-ci-action@main
-    #  with:
-    #    esp_idf_version: release-v5.4
-    #    target: esp32c6
-    #    command: "idf.py set-target esp32c6 && idf.py build"
-
-    #- name: Arduino build ESP32-H2
-    #  uses: espressif/esp-idf-ci-action@main
-    #  with:
-    #    esp_idf_version: release-v5.4
-    #    target: esp32h2
-    #    command: "idf.py set-target esp32h2 && idf.py build"
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      #if: github.ref_type == 'tag'
+      prerelease: true
+      with:
+        files: build.zip
 
