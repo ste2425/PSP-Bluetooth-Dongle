@@ -6,7 +6,7 @@ It is a PlatformIO project and powered by the great [BluePad32 Library](https://
 
 ## Acknowledgements
 
-The work ive done is just a thin layer ontop of work many other people have done, with lots of help from others.
+The work ive done is just a thin layer ontop of work many other people have done, Iv'e also had lots of help from others.
 
 * TokyoDrift - Originally created work that uses the SIO port to allow external controllers back around 2010. Since uploaded to [Github](https://github.com/unraze/PSXControllerToPSP)
 * OPDitto project - A project that uses the SIO port to allow for a real second analog stick. Its SIO implementation has been extremly helpful to me. Repo [Here](https://github.com/Operation-DITTO)
