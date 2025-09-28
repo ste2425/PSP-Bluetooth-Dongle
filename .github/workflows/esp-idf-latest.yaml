@@ -25,14 +25,15 @@ jobs:
         target: esp32
         command: "idf.py set-target esp32 && idf.py build"
     
-    - name: Zip build folder
-      run: |
-        zip -r build.zip build
+    - uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: build/
 
     - name: Release
       uses: softprops/action-gh-release@v2
       if: github.ref_type == 'tag'
       with:
         prerelease: true
-        files: build.zip
+        files: build/PSP-Bluetooth-Dongle.bin
 
