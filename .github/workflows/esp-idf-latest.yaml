@@ -32,7 +32,6 @@ jobs:
         target: esp32
         command: |
           esptool.py --chip esp32 merge_bin --output build/PSP-Bluetooth-Dongle-merged.bin --flash_mode dio --flash_freq keep --flash_size 4MB 0x1000 build/bootloader/bootloader.bin 0x8000 build/partition_table/partition-table.bin 0x10000 build/PSP-Bluetooth-Dongle.bin
-          mv build/PSP-Bluetooth-Dongle-merged.bin build/PSP-Bluetooth-Dongle.bin
     
     - uses: actions/upload-artifact@v4
       with:
@@ -44,5 +43,9 @@ jobs:
       if: github.ref_type == 'tag'
       with:
         prerelease: true
-        files: build/PSP-Bluetooth-Dongle.bin
+        files: | 
+          build/PSP-Bluetooth-Dongle.bin
+          build/PSP-Bluetooth-Dongle-merged.bin
+          build/bootloader/bootloader.bin
+          build/partition_table/partition-table.bin
 
