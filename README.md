@@ -251,6 +251,9 @@ The following mask values can be used to get the different controller button sta
 ## How to compile it
 
 Clone the project. 
+
+`git clone --recursive git@github.com:ste2425/PSP-Bluetooth-Firmware.git`
+
 I use PlatformIO to build and upload.
 
 ### Using PlatformIO
