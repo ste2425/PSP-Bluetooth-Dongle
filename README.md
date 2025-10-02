@@ -1,6 +1,6 @@
-# PSP Bluetooth *Dongle*
+# PSP Bluetooth *Firmware*
 
-This is the firmware for a ESP32 based dongle to act as the bridge between the PSP and Bluetooth Controllers.
+This is the firmware for a ESP32 based module to act as the bridge between the PSP and Bluetooth Controllers.
 
 It is a PlatformIO project and powered by the great [BluePad32 Library](https://bluepad32.readthedocs.io/en/latest) and is based on the [template](https://github.com/ricardoquesada/esp-idf-arduino-bluepad32-template.git) project.
 
@@ -73,7 +73,7 @@ If controller index found the following bytes are returned.
 
 ### [0x04] Enable New Connections Command
 
-Enable pairing for new controllers. If enabled the dongle will autmatically connect to any controllers in pairing mode. Upto `four` controllers can be connected at once.
+Enable pairing for new controllers. If enabled the module will autmatically connect to any controllers in pairing mode. Upto `four` controllers can be connected at once.
 
 **Request bytes** : None.
 
@@ -188,7 +188,7 @@ If controller index found and command executed:
 
 ### [0xA] Forget Bluetooth Keys Command
 
-This will instruct the dongle to remove all exist bluetooth keys for connected controllers. This will essentially unpair all existing controllers.
+This will instruct the module to remove all exist bluetooth keys for connected controllers. This will essentially unpair all existing controllers.
 
 **Request Bytes** N/A
 
