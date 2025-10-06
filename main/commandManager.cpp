@@ -7,4 +7,6 @@ void processCommand(uint8_t command) {
             return;
         }
     }
+
+    SerialWrapper_write(RESPONSE_COMMANDNOTFOUND);
 }

@@ -16,6 +16,7 @@ void controllerLEDExecute(void);
 void controllerVibrateExecute(void);
 void controllerInfoExecute(void);
 void controllerPlayerLEDExecute(void);
+void firmwareVersionExecute(void);
 
 typedef void (*CommandFunc)(void);
 
@@ -36,6 +37,7 @@ static CommandEntry commandMap[] = {
     {0x09, controllerInfoExecute},
     {0xA, forgetBluetoothKeysExecute},
     {0xB, controllerPlayerLEDExecute},
+    {0xC, firmwareVersionExecute}
 };
 
 static const int commandMapSize = sizeof(commandMap) / sizeof(CommandEntry);

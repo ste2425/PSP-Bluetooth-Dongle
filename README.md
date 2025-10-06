@@ -4,6 +4,10 @@ This is the firmware for a ESP32 based module to act as the bridge between the P
 
 It is a PlatformIO project and powered by the great [BluePad32 Library](https://bluepad32.readthedocs.io/en/latest) and is based on the [template](https://github.com/ricardoquesada/esp-idf-arduino-bluepad32-template.git) project.
 
+## The PSP Bluetooth Project
+
+This is a part of the PSP Bluetooth project, to find information on the other components that make up this project please look here: https://github.com/psp-bluetooth
+
 ## Acknowledgements
 
 The work ive done is just a thin layer ontop of work many other people have done, Iv'e also had lots of help from others.
@@ -30,185 +34,26 @@ Every command responds first with a status byte then a fixed number of response 
 
 Below lists all the commands, any Request data they expect from the PSP and their repsonses.
 
----
-
-### [0x02] Ping Command
-A simple ping command to allow the PSP to detect if the ESP32 is connected.
-
-**Request bytes** : None.
-
-**Response Bytes** : [0x10]
-
----
-
-### [0x03] Request Controller Data Command
-Used to request the state of a controller at a given index.
-
-**Request bytes**: [ControllerIndexByte]
-
-**Response Bytes**
-
-If Request data not recieved: [0xA]
-
-If controller not connected at given index: [0xB]
-
-If controller index found the following bytes are returned.
-
-**Analog stick NOTE** All analog stick values follow the same range of `0 - 255`. `0` being the sticks left/bottom most position and `255` its right/top most position.
-
-| index | purpose |
-| -- | -- |
-| 0 | Fixed status byte of `0xC` |
-| 1 | Right analog stick X axis.  |
-| 2 | Right analog stick Y axis. |
-| 3 | Left analog stick X axis. |
-| 4 | Right analog stick Y axis. |
-| 5 | Dpad data. For values see [Bit Masks](#bit-masks) |
-| 6 | Controller Buttons. *High Byte*. |
-| 7 | Controller Buttons. *Low Byte*. For values see [Bit Masks](#bit-masks) |
-| 8 | Controller Misc Buttons. *High Byte*. |
-| 9 | Controller Misc Buttons. *Low Byte*. For values see [Bit Masks](#bit-masks) |
-
----
-
-### [0x04] Enable New Connections Command
-
-Enable pairing for new controllers. If enabled the module will autmatically connect to any controllers in pairing mode. Upto `four` controllers can be connected at once.
-
-**Request bytes** : None.
-
-**Response Bytes** : [0x11]
-
----
-
-### [0x05] Disable New Connections Command
-
-Prevents pairing of new controllers. Exiting paired controllers will still connect.
-
-**Request bytes** : None.
-
-**Response Bytes** : [0x1]
-
----
-
-### [0x06] Disconnect Controller Command
-
-Will cause the specified controller to disconnect and turn off.
-
-**Request bytes**: [ControllerIndexByte]
-
-**Response Bytes**
-
-If Request data not recieved: [0xA]
-
-If controller not connected at given index: [0xB]
-
-If controller index found and command executed: [0x13]
-
----
-
-### [0x07] Set Controller LED Colour
-
-Some controllers such as the DS4 and the DuaSense have a built LED. The colour and brightness of this can be set.
-
-**Note** colour values are in the range of `0 - 255`. With `255` the brightest and `0` off for that colour.
-
-**Request bytes**: [
-    ControllerIndexByte,
-    RedValueByte,
-    GreenValueByte,
-    BlueValueByte
-]
-
-**Response Bytes**
-
-If Request data not recieved: [0xA]
-
-If controller not connected at given index: [0xB]
-
-If controller index found and command executed: [0xD]
-
----
-
-### [0x8] Set Controller Vibration
-
-If the controller support vibration it can be set. If it does not this command will be ignored.
-
-Some controllers, such as the DualSense, and a strong and weak motor. The magnitude of these can be controlled invidually.
-
-If the controller, such as the Switch Pro, does not have this feature the strong motor value will be used.
-
-There is also a duration value. This is usefull should the controller loose a packet of data, the vibration will not remain on forever.
-
-**Request bytes**: 
-
-| index | byte value |
-| -- | -- |
-| 0 | Controller index |
-| 1 | delay in MS |
-| 2 | delay in MS |
-| 3 | duration in MS |
-| 4 | duration in MS |
-| 5 | weak magnitude |
-| 6 | string magnitude |
-
-**Response Bytes**
-
-If Request data not recieved: [0xA]
-
-If controller not connected at given index: [0xB]
-
-If controller index found and command executed: [0xE]
-
----
-
-### [0x9] Get Controller Information Command
-
-This will return information on the type of controller connected and its battery level.
-
-**Request Bytes** [ControllerIndexByte]
-
-**Response Bytes**
-
-If Request data not recieved: [0xA]
-
-If controller not connected at given index: [0xB]
-
-If controller index found and command executed: 
-
-**Note** For battery level the range is `0 - 255`. `0` means an unknown battery state, `1` is empty and `255` is full.
-
-| byte index | value |
-| -- | -- |
-| 0 | Fixed satus byte `0xF` |
-| 1 | Controler Type byte. See [Controller Types](#controller-types) |
-| 2 | Battery level Byte |
-
----
-
-### [0xA] Forget Bluetooth Keys Command
-
-This will instruct the module to remove all exist bluetooth keys for connected controllers. This will essentially unpair all existing controllers.
-
-**Request Bytes** N/A
-
-**Response Bytes** [0x14]
-
----
-
-### [0xB] Set Player LED Command
-
-Most controllers have an indicator for which player the controller is for, usually one to four LED's. These can be set.
-
-**Request Bytes** [ControllerIndexByte, playerNumberByte - See [Bit Masks](#bit-masks)]
-
-**Response Bytes**
-
-If Request data not recieved: [0xA]
-
-If controller not connected at given index: [0xB]
-
-If controller index found and command executed: [0x15]
+**Note:** If an error status byte (such as `[0xA]` or `[0xB]`) is returned, **no further data will follow** that byte.
+
+| Command Byte | Description | Request Bytes | Response Bytes |
+|--------------|-------------|--------------|---------------|
+| `0x0C` | Get Firmware Version<br>Returns a semver string for the firmware version. | _None_ | `[0x17, <len>, <version string bytes>]`<br>Example: `[0x17, 5, '1','.','2','.','3']`<br>**If error:** `[0xA]` (no further data) |
+| `0x02` | Ping Command<br>Detect if the ESP32 is connected. | _None_ | `[0x10]` |
+| `0x03` | Request Controller Data<br>Get state of a controller at a given index.<br>Analog stick values: 0-255. | `[ControllerIndexByte]` | `[0xA]` if request data not received (**no further data**)<br>`[0xB]` if controller not connected (**no further data**)<br>`[0xC, <Analog RX>, <Analog RY>, <Analog LX>, <Analog LY>, <Dpad>, <Buttons High>, <Buttons Low>, <Misc Buttons High>, <Misc Buttons Low>]` if successful. For values see [Bit Masks](#bit-masks) |
+| `0x04` | Enable New Connections<br>Allow pairing for new controllers. | _None_ | `[0x11]` |
+| `0x05` | Disable New Connections<br>Prevent pairing of new controllers. | _None_ | `[0x1]` |
+| `0x06` | Disconnect Controller<br>Disconnect and turn off specified controller. | `[ControllerIndexByte]` | `[0xA]` if request data not received (**no further data**)<br>`[0xB]` if controller not connected (**no further data**)<br>`[0x13]` if successful |
+| `0x07` | Set Controller LED Colour<br>Set LED color and brightness for supported controllers.<br>Color values: 0-255. | `[ControllerIndexByte, RedValueByte, GreenValueByte, BlueValueByte]` | `[0xA]` if request data not received (**no further data**)<br>`[0xB]` if controller not connected (**no further data**)<br>`[0xD]` if successful |
+| `0x08` | Set Controller Vibration<br>Set vibration magnitude and duration.<br>Delay/duration in ms, magnitude: 0-255. | `[ControllerIndexByte, Delay MS Low, Delay MS High, Duration MS Low, Duration MS High, WeakMagnitude, StrongMagnitude]` | `[0xA]` if request data not received (**no further data**)<br>`[0xB]` if controller not connected (**no further data**)<br>`[0xE]` if successful |
+| `0x09` | Get Controller Information<br>Get type and battery level of controller.<br>Battery: 0 (unknown) to 255 (full). | `[ControllerIndexByte]` | `[0xA]` if request data not received (**no further data**)<br>`[0xB]` if controller not connected (**no further data**)<br>`[0xF, <Controller Type>, <Battery Level>]` if successful. For values see [Bit Masks](#bit-masks) |
+| `0x0A` | Forget Bluetooth Keys<br>Unpair all existing controllers. | _None_ | `[0x14]` |
+| `0x0B` | Set Player LED<br>Set player indicator LEDs. | `[ControllerIndexByte, PlayerNumberByte]` | `[0xA]` if request data not received (**no further data**)<br>`[0xB]` if controller not connected (**no further data**)<br>`[0x15]` if successful. For values see [Bit Masks](#bit-masks) |
+
+**Error Status Bytes:**  
+- `[0xA]` — Request data not received (no further data returned)  
+- `[0xB]` — Controller not connected (no further data returned)
+- `[0x17]` - Command was not found (no further data returned)
 
 ---
 
@@ -274,3 +119,4 @@ Once all installed:
 2. Click on *build*
 
 *Note*. Clicking upload should first do a build if you want to build and upload.
+

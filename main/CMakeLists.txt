@@ -12,6 +12,7 @@ set(srcs
         "commands/forgetBluetoothKeys.cpp"
         "commands/controllerPlayerLED.cpp"
         "commands/controllerVibrate.cpp"
+        "commands/firmwareVersion.cpp"
         "commands/controllerInfo.cpp")
 
 set(requires "bluepad32" "bluepad32_arduino" "arduino" "btstack")
